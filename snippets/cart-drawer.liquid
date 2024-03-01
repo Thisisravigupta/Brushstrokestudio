@@ -6,6 +6,7 @@
 {% endcomment %}
 
 {{ 'quantity-popover.css' | asset_url | stylesheet_tag }}
+{{ 'component-card.css' | asset_url | stylesheet_tag }}
 
 <script src="{{ 'cart.js' | asset_url }}" defer="defer"></script>
 <script src="{{ 'quantity-popover.js' | asset_url }}" defer="defer"></script>
@@ -20,7 +21,7 @@
   <div id="CartDrawer" class="cart-drawer">
     <div id="CartDrawer-Overlay" class="cart-drawer__overlay"></div>
     <div
-      class="drawer__inner"
+      class="drawer__inner gradient color-{{ settings.cart_color_scheme }}"
       role="dialog"
       aria-modal="true"
       aria-label="{{ 'sections.cart.title' | t }}"
@@ -218,20 +219,7 @@
                         </td>
 
                         <td class="cart-item__totals right" role="cell" headers="CartDrawer-ColumnTotal">
-                          <div class="loading-overlay hidden">
-                            <div class="loading-overlay__spinner">
-                              <svg
-                                aria-hidden="true"
-                                focusable="false"
-                                class="spinner"
-                                viewBox="0 0 66 66"
-                                xmlns="http://www.w3.org/2000/svg"
-                              >
-                                <circle class="path" fill="none" stroke-width="6" cx="33" cy="33" r="30"></circle>
-                              </svg>
-                            </div>
-                          </div>
-
+                          {%- render 'loading-spinner' -%}
                           <div class="cart-item__price-wrapper">
                             {%- if item.original_line_price != item.final_line_price -%}
                               <div class="cart-item__discounted-prices">
@@ -275,20 +263,28 @@
                           if item.variant.quantity_rule.increment > 1 or item.variant.quantity_rule.min > 1 or item.variant.quantity_rule.max != null
                             assign has_qty_rules = true
                           endif
-      
+
                           assign has_vol_pricing = false
                           if item.variant.quantity_price_breaks.size > 0
                             assign has_vol_pricing = true
                           endif
                         -%}
-                        <td class="cart-item__quantity {% if has_qty_rules or has_vol_pricing %} cart-item__quantity--info{% endif %}" role="cell" headers="CartDrawer-ColumnQuantity">
+                        <td
+                          class="cart-item__quantity {% if has_qty_rules or has_vol_pricing %} cart-item__quantity--info{% endif %}"
+                          role="cell"
+                          headers="CartDrawer-ColumnQuantity"
+                        >
                           <quantity-popover>
                             <div class="cart-item__quantity-wrapper quantity-popover-wrapper">
-                              <div class="quantity-popover-container{% if has_qty_rules or has_vol_pricing %} quantity-popover-container--hover{% endif %}">                                
+                              <div class="quantity-popover-container{% if has_qty_rules or has_vol_pricing %} quantity-popover-container--hover{% endif %}">
                                 <quantity-input class="quantity cart-quantity">
                                   <button class="quantity__button no-js-hidden" name="minus" type="button">
                                     <span class="visually-hidden">
-                                      {{- 'products.product.quantity.decrease' | t: product: item.product.title | escape -}}
+                                      {{-
+                                        'products.product.quantity.decrease'
+                                        | t: product: item.product.title
+                                        | escape
+                                      -}}
                                     </span>
                                     {% render 'icon-minus' %}
                                   </button>
@@ -312,7 +308,11 @@
                                   >
                                   <button class="quantity__button no-js-hidden" name="plus" type="button">
                                     <span class="visually-hidden">
-                                      {{- 'products.product.quantity.increase' | t: product: item.product.title | escape -}}
+                                      {{-
+                                        'products.product.quantity.increase'
+                                        | t: product: item.product.title
+                                        | escape
+                                      -}}
                                     </span>
                                     {% render 'icon-plus' %}
                                   </button>
@@ -341,13 +341,13 @@
                                 {% render 'icon-info' %}
                                 <span>
                                   {%- if has_vol_pricing -%}
-                                    Volume pricing available
+                                    {{ 'products.product.volume_pricing.note' | t }}
                                   {%- elsif has_qty_rules -%}
-                                    View quantity rules
+                                    {{ 'products.product.quantity.note' | t }}
                                   {%- endif -%}
                                 </span>
                               </button>
-                            {%- endif -%}                      
+                            {%- endif -%}
                             {%- if has_vol_pricing or has_qty_rules -%}
                               <div
                                 class="cart-items__info global-settings-popup quantity-popover__info"
@@ -355,7 +355,9 @@
                                 hidden
                               >
                                 {%- if has_qty_rules == false -%}
-                                  <span class="volume-pricing-label caption">Volume pricing</span>
+                                  <span class="volume-pricing-label caption">
+                                    {{- 'products.product.volume_pricing.title' | t -}}
+                                  </span>
                                 {%- endif -%}
                                 <div class="quantity__rules caption no-js-hidden">
                                   {%- if item.variant.quantity_rule.increment > 1 -%}
