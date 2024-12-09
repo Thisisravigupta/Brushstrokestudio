@@ -78,11 +78,21 @@
         "padding_top": 40,
         "padding_bottom": 52
       }
+    },
+    "custom_liquid_DUyyCx": {
+      "type": "custom-liquid",
+      "settings": {
+        "custom_liquid": "{{ collection.metafeilds.custom.meta_content }}",
+        "color_scheme": "",
+        "padding_top": 40,
+        "padding_bottom": 52
+      }
     }
   },
   "order": [
     "banner",
     "product-grid",
-    "rich_text_rLpnEG"
+    "rich_text_rLpnEG",
+    "custom_liquid_DUyyCx"
   ]
 }
